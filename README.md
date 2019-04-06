@@ -3,6 +3,14 @@ ElGamal encryption system over a Redis communication channel.
 
 -  https://redis.io/
 
+## How it works
+Alice.py, Bob.py and Eve.py are daemon processes that interact via Redis only:
+-  Bob.py is a process that creates its own public and private keys, publishes the public one, waits for Alice's message and decrypt it.
+-  Eve.py is a sniffer process.
+-  Alice.py is a process that reads Bob's public key, encrypt a message and sends it to Bob.py.
+
+You have to run these processes in that given order.
+
 ## Contacts
 
 Agnese Salutari – agneses92@hotmail.it
