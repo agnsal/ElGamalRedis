@@ -19,7 +19,7 @@ import ast
 RCh = Redis.RedisChannel()
 print("Bob creates his ElGamal Keys: ")
 BobElGamal = eg.ElGamalEncryption(False, keyFile='Utils/primes50.txt')
-print("Bob connects and registers his Public Keys on the channel:")
+print("Bob connects and registers his Public Key on the channel:")
 RCh.connect()
 RCh.setRedisVariable(varName='BobPublicKey', varValue=str(BobElGamal.getKeys().getPublicKey()))
 print("Bob waits for Alice's messages from the channel:")
