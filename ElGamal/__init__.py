@@ -32,7 +32,7 @@ class ElGamalKeyPair:
             private key = e.
             p is a prime.
         :param pBounds: list of 2 integers [optional]; inferior and superior limits of p.
-            p has to be bigger than any letter ASCII representation.
+            p has to be bigger than any block made of 3 letter ASCII representation bits, that is 16777216 = 2^(24).
         :param primesFilePath: string [oprional]; the path to a file containing prime numbers.
         '''
         self.__MA = ModularArithmetics()
@@ -44,7 +44,7 @@ class ElGamalKeyPair:
             assert isinstance(pBounds, list)
             assert len(pBounds) == 2
             assert isinstance(pBounds[0], int)
-            assert pBounds[0] > 300
+            assert pBounds[0] > 16777216
             assert isinstance(pBounds[1], int)
             p = ma.randomPrime(infBound=pBounds[0], supBound=pBounds[1])
         self.generate(p=p)
@@ -75,6 +75,7 @@ class ElGamalKeyPair:
         '''
         assert isinstance(p, int)
         ma = self.getModArithmetics()
+        # To generate a, we don't use a function that finds primitive roots (it would be time consuming).
         a = ma.randomInteger(2, p - 1)
         e = ma.randomInteger(2, p - 2)
         b = ma.modularPower(a=a, e=e, m=p)
@@ -121,6 +122,48 @@ class ElGamalEncryption:
         '''
         return self.__MA
 
+    def textFormatter(self, plainText):
+        assert isinstance(plainText, str)
+        chrV = []
+        for i in range(0, len(plainText)):
+            chrV.append(plainText[i])
+        # print('chrV: ' + str(chrV)) # Test
+        while not (len(chrV) % 3 == 0):
+            chrV.append(' ')
+        # print(chrV) # Test
+        binV = []
+        i = 0
+        while i < len(chrV):
+            binCombo = '{:0>8}'.format(format(ord(chrV[i]), "b")) + \
+                       '{:0>8}'.format(format(ord(chrV[i + 1]), "b")) + \
+                       '{:0>8}'.format(format(ord(chrV[i + 2]), "b"))
+            binV.append(binCombo)
+            i += 3
+        # print(binV) # Test
+        fText = []
+        for elem in binV:
+            fText.append(int(elem, 2))
+        # print(fText) # Test
+        return fText
+
+    def textDeFormatter(self, fVector):
+        assert isinstance(fVector, list)
+        binV = []
+        for elem in fVector:
+            binCombo = '{:0>24}'.format(format(elem, "b"))
+            binV.append(binCombo)
+        # print(binV) # Test
+        chrV = []
+        for elem in binV:
+            str1 = elem[0: 8]
+            str2 = elem[8: 16]
+            str3 = elem[16: 24]
+            chrV.append(chr(int(str1, 2)))
+            chrV.append(chr(int(str2, 2)))
+            chrV.append(chr(int(str3, 2)))
+            # print(chrV) # Test
+        return chrV
+
     def encrypt(self, data, receiverPubKey):
         '''
         Encrypts data.
@@ -139,17 +182,16 @@ class ElGamalEncryption:
         receiverP = receiverPubKey[0]
         receiverA = receiverPubKey[1]
         receiverB = receiverPubKey[2]
-        k = ma.randomInteger(infBound=2, supBound=receiverP-2) # Secret for the sender
+        k = ma.randomInteger(infBound=2, supBound=receiverP - 2)  # Secret for the sender
         y = ma.modularPower(a=receiverB, e=k, m=receiverP)
         r = ma.modularPower(a=receiverA, e=k, m=receiverP)
-        print('r = a^(k) = ' + str(r)) # Test
-        print('y = a^(e*k) = ' + str(y)) # Test
-        tVector = []
-        for i in range(0, len(data)):
-            tVector.append(data[i])
+        print('r = a^(k) = ' + str(r))  # Test
+        print('y = a^(e*k) = ' + str(y))  # Test
+        tVector = self.textFormatter(data)
+        print('Formatted Text: ' + str(tVector)) # Test
         for i in range(0, len(tVector)):
-            print(tVector[i] + ' = ' + str(ord(tVector[i])))
-            tVector[i] = y * ord(tVector[i])
+            print(tVector[i])
+            tVector[i] = y * tVector[i]
             print(' -> ' + str(tVector[i]))
         print('Encryption Finished.')
         return [r, tVector]
@@ -174,10 +216,13 @@ class ElGamalEncryption:
         h = ma.modularPower(a=r, e=myPrivK, m=myP)
         print('h = ' + str(h)) # Test
         for i in range(0, len(tVector)):
-            mVector.append(chr(int(tVector[i] / h)))
+            mVector.append(int(tVector[i] / h))
         print(mVector)
         print('Decryption Finished.')
-        return ''.join(mVector)
+        print('Formatted Text: ' + str(mVector))
+        dfVector = self.textDeFormatter(mVector)
+        print('Plain Text: ' + str(dfVector))
+        return ''.join(dfVector)
 
     def decryptWithPrivK(self, r, tVector, p, privKey):
         '''
@@ -199,5 +244,7 @@ class ElGamalEncryption:
             mVector.append(chr(int(tVector[i] / h)))
         print(mVector)
         print('Decryption Finished.')
-        return ''.join(mVector)
-
+        print('Formatted Text: ' + str(mVector))
+        dfVector = self.textDeFormatter(mVector)
+        print('Plain Text: ' + str(dfVector))
+        return ''.join(dfVector)
