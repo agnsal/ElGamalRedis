@@ -18,7 +18,7 @@ Alice.py, Bob.py and Eve.py are daemon processes that interact via Redis only:
 ```sh
     sudo nano /etc/redis/redis.conf
 ```
-3. Resrart Redis:
+3. Restart Redis:
 ```sh
     sudo systemctl restart redis.service
 ```
