@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and limitations 
 # Dependencies:
 import random
 
+
 class ModularArithmetics:
 
     def changeToPositive(self, x, m):
@@ -45,6 +46,17 @@ class ModularArithmetics:
                 if (num % i) == 0:
                     return False
             return True
+
+    def findPrimitiveRootsOfPrime(self, primeNumber): # Time consuming!!!
+        '''
+        Finds primitive roots of primeNumber.
+        :param primeNumber: integer (a prime number).
+        :return: list of integers.
+        '''
+        from sympy.ntheory.residue_ntheory import _primitive_root_prime_iter
+        assert isinstance(primeNumber, int)
+        assert self.isPrime(primeNumber)
+        return list(_primitive_root_prime_iter(primeNumber))
 
     def randomInteger(self, infBound=1, supBound=10):
         '''
@@ -77,6 +89,7 @@ class ModularArithmetics:
         :param: filePath: string; the path of the file containing primes.
         :return: integer; a random prime.
         '''
+        assert isinstance(filePath, str)
         file = open(filePath, 'r')
         fileList = file.readlines()
         primes = []
@@ -86,6 +99,34 @@ class ModularArithmetics:
             for p in linePrimes:
                 primes.append(p)
         return int(random.choice(primes))
+
+    def randomPrimitiveRoot(self, primeNumber): # Uses a time consuming function to find primitive roots!!!
+        '''
+        Returns a random primitive root of primeNumber.
+        :param primeNumber: integer (a prime number).
+        :return: integer.
+        '''
+        assert isinstance(primeNumber, int)
+        primitiveRoots = self.findPrimitiveRootsOfPrime(primeNumber)
+        return random.choice(primitiveRoots)
+
+    def listOfPrimesFromFile(self, filePath='smallPrimes.txt'):
+        '''
+        https://primes.utm.edu/lists/small/millions/
+        :param: filePath: string; the path of the file containing primes.
+        :return: list of integer.
+        '''
+        file = open(filePath, 'r')
+        fileList = file.readlines()
+        primes = []
+        for line in fileList:
+            line = ' '.join(line.split())
+            linePrimes = line.split(' ')
+            for p in linePrimes:
+                if not p == '':
+                    primes.append(int(p))
+        return primes
+
 
     def modularMultiplication(self, x, y, m):
         '''
