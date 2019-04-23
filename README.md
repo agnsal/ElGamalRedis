@@ -1,10 +1,8 @@
 # ElGamalRedis
 ElGamal encryption system over a Redis communication channel.
 
--  https://redis.io/
-
 ## How to set up the environment
-1. Install Redis:
+1. Install Redis (https://redis.io/):
 ```sh
     sudo apt update
     sudo apt install redis-server
