@@ -11,30 +11,30 @@ Alice.py, Bob.py and Eve.py are daemon processes that interact via Redis only:
 ## How to set up the environment
 1. Install Redis (https://redis.io/):
 ```sh
-    sudo apt update
-    sudo apt install redis-server
+sudo apt update
+sudo apt install redis-server
 ```
 2. The supervised directive is set to no by default. If you are running Ubuntu, which uses the systemd init system, find it and change it to systemd:
 ```sh
-    sudo nano /etc/redis/redis.conf
+sudo nano /etc/redis/redis.conf
 ```
 3. Restart Redis:
 ```sh
-    sudo systemctl restart redis.service
+sudo systemctl restart redis.service
 ```
 4. If you don't want Redis to be a startup program:
 ```sh
-    sudo systemctl disable redis
+sudo systemctl disable redis
 ```
 
 ## How to run it
 1. You have to run Redis first:
 ```sh
-    redis-server
+redis-server
 ```
 2. (Optional) If you want to see what's happening on Redis:
 ```sh
-    redis-cli monitor
+redis-cli monitor
 ```
 3. You have to run Bob.py first, Eve.py and finally Alice.py (in that order), because Alice and Eve need to read Bob's public key from Redis and because Eve needs to listen to the channel waiting for Alice's messages.
 
