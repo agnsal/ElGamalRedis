@@ -1,5 +1,5 @@
 # ElGamalRedis
-ElGamal encryption system over a Redis communication channel.
+ElGamal encryption system over a Redis communication channel, attacked with Index Calculus Algorithm.
 
 ## How to set up the environment
 1. Install Redis (https://redis.io/):
