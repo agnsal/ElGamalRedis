@@ -1,6 +1,13 @@
 # ElGamalRedis
 ElGamal encryption system over a Redis communication channel, attacked with Index Calculus Algorithm.
 
+
+## How it works
+Alice.py, Bob.py and Eve.py are daemon processes that interact via Redis only:
+-  Bob.py is a process that creates its own public and private keys, publishes the public one, waits for Alice's message and decrypts it.
+-  Eve.py is a sniffer process (Redis channel is public), that uses Index Calculus algorithm to try to solve Discrete Logarithm problems.
+-  Alice.py is a process that reads Bob's public key, encrypts a message and sends it to Bob.py.
+
 ## How to set up the environment
 1. Install Redis (https://redis.io/):
 ```sh
@@ -19,12 +26,6 @@ ElGamal encryption system over a Redis communication channel, attacked with Inde
 ```sh
     sudo systemctl disable redis
 ```
-
-## How it works
-Alice.py, Bob.py and Eve.py are daemon processes that interact via Redis only:
--  Bob.py is a process that creates its own public and private keys, publishes the public one, waits for Alice's message and decrypts it.
--  Eve.py is a sniffer process (Redis channel is public), that uses Index Calculus algorithm to try to solve Discrete Logarithm problems.
--  Alice.py is a process that reads Bob's public key, encrypts a message and sends it to Bob.py.
 
 ## How to run it
 1. You have to run Redis first:
