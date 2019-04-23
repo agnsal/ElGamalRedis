@@ -23,7 +23,7 @@ print("Alice connects and reads Bob's Public key from the channel:")
 RCh.connect()
 BobPubKey = ast.literal_eval(RCh.getRedisVariable('BobPublicKey').decode('utf-8'))
 print('Bob Key is: ' + str(BobPubKey))
-plainText = 'ciao'
+plainText = 'ciao!'
 print('Plain Text: ' + str(plainText))
 print('Alice encrypts her message:')
 encrypted = AliceElGamal.encrypt(data=plainText, receiverPubKey=BobPubKey)
